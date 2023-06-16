@@ -25,7 +25,6 @@ namespace TabloidCLI.UserInterfaceManagers
             _connectionString = connectionString;
         }
 
-        //creates the menu for post functions
         public IUserInterfaceManager Execute()
         {;
             Console.WriteLine("Post Menu");
@@ -123,20 +122,9 @@ namespace TabloidCLI.UserInterfaceManagers
 
             Console.Write("Url: ");
             post.Url = Console.ReadLine();
-
-            //Console.Write("CreateDateTime: ");
-            //ask group what kind of date we're using here
-            //like Convert.ToDateTime(Console.ReadLine()) ?
-            //this works and posts to database, but obv the date is datetime.now
             post.PublishDateTime = DateTime.Now;
 
 
-            // list authors
-            //foreach author in authors
-            //console write line a.id a.fullname
-            //console write line "> "
-            //int choice = int.Parse(readline)
-            //author author = authors[choice - 1]
             Console.WriteLine("Please choose an author:");
             List<Author> authors = _authorRepository.GetAll();
             foreach (Author singleAuthor in authors)
@@ -168,7 +156,7 @@ namespace TabloidCLI.UserInterfaceManagers
 
         }
 
-        //This allows user to edit a journal entry but not change the Date Created
+
         private void Edit()
         {
             Post postToEdit = Choose("Which post would you like to edit?");
@@ -194,7 +182,6 @@ namespace TabloidCLI.UserInterfaceManagers
             _postRepository.Update(postToEdit);
         }
 
-        //This allows user to delete a journal entry
         private void Remove()
         {
             Post postToDelete = Choose("Which post would you like to remove?");
