@@ -9,9 +9,12 @@ namespace TabloidCLI.UserInterfaceManagers
 
         public IUserInterfaceManager Execute()
         {
-            Console.WriteLine("Welcome to THE place for crocodile soldiers!");
+            Console.WriteLine("______________________________________");
+            Console.WriteLine(" I hope you're having a wonderful day!");
+            Console.WriteLine("______________________________________");
+            Console.WriteLine("Main Menu");
 
-            Console.WriteLine(" 1) Journal Management");
+            Console.WriteLine(" 1) My Journal Management");
             Console.WriteLine(" 2) Blog Management");
             Console.WriteLine(" 3) Author Management");
             Console.WriteLine(" 4) Post Management");
