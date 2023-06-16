@@ -22,6 +22,7 @@ namespace TabloidCLI.UserInterfaceManagers
             Console.WriteLine("Blog Menu");
             Console.WriteLine(" 1) Add Blog");
             Console.WriteLine(" 2) See All Blogs");
+            Console.WriteLine(" 3) Remove a Blog");
             Console.WriteLine(" 0) Go Back");
 
             Console.Write("> ");
@@ -33,6 +34,9 @@ namespace TabloidCLI.UserInterfaceManagers
                     return this;
                 case "2":
                     ListBlogs();
+                    return this;
+                case "3":
+                    RemoveBlog();
                     return this;
                 case "0":
                     return _parentUI;
@@ -66,7 +70,25 @@ namespace TabloidCLI.UserInterfaceManagers
         }
         private Blog ChooseBlog(string prompt = null)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(prompt);
+            List<Blog> blogs = _blogRepository.GetAll();
+            for (int i = 0; i < blogs.Count; i++)
+            {
+                Blog blog = blogs[i];
+                Console.WriteLine($" {i + 1}) {blog.Title} ({blog.Url})");
+            }
+            Console.Write("> ");
+            string input = Console.ReadLine();
+            try
+            {
+                int choice = int.Parse(input);
+                return blogs[choice - 1];
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Invalid Selection");
+                return null;
+            }
         }
 
         private void EditBlog()
@@ -76,7 +98,11 @@ namespace TabloidCLI.UserInterfaceManagers
 
         private void RemoveBlog()
         {
-            throw new NotImplementedException();
+           Blog blogToDelete = ChooseBlog("Which blog will you remove?");
+            if (blogToDelete != null)
+            {
+                _blogRepository.Delete(blogToDelete.Id);
+            }
         }
     }
 }
