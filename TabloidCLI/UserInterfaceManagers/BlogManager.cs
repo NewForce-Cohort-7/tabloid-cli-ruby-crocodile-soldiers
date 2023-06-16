@@ -21,6 +21,7 @@ namespace TabloidCLI.UserInterfaceManagers
         {
             Console.WriteLine("Blog Menu");
             Console.WriteLine(" 1) Add Blog");
+            Console.WriteLine(" 2) See All Blogs");
             Console.WriteLine(" 0) Go Back");
 
             Console.Write("> ");
@@ -29,6 +30,9 @@ namespace TabloidCLI.UserInterfaceManagers
             {
                 case "1":
                     AddBlog();
+                    return this;
+                case "2":
+                    ListBlogs();
                     return this;
                 case "0":
                     return _parentUI;
@@ -54,9 +58,12 @@ namespace TabloidCLI.UserInterfaceManagers
 
         private void ListBlogs()
         {
-            throw new NotImplementedException();
+            List<Blog> blogs = _blogRepository.GetAll();
+            foreach (Blog blog in blogs)
+            {
+                Console.WriteLine(blog);
+            }
         }
-
         private Blog ChooseBlog(string prompt = null)
         {
             throw new NotImplementedException();
