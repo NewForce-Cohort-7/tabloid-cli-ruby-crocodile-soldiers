@@ -8,6 +8,6 @@ namespace TabloidCLI
         TEntity Get(int id);
         void Insert(TEntity entry);
         void Update(TEntity entry);
-        void Delete(int id);
+        
     }
 }
