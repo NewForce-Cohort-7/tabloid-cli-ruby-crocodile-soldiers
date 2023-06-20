@@ -89,7 +89,23 @@ namespace TabloidCLI
 
         public void Update(Blog entry)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Blog 
+                                           SET Title = @title,
+                                               Url = @url
+                                         WHERE id = @id";
+
+                    cmd.Parameters.AddWithValue("@title", entry.Title);
+                    cmd.Parameters.AddWithValue("@Url", entry.Url);
+                    cmd.Parameters.AddWithValue("@id", entry.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
