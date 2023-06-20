@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using TabloidCLI.Models;
+using TabloidCLI.Repositories;
 
-namespace TabloidCLI.Repositories
-{
-    using System;
-    using System.Collections.Generic;
-    using global::TabloidCLI.Models;
-    using Microsoft.Data.SqlClient;
-    using TabloidCLI.Models;
-    using TabloidCLI.Repositories;
-
-    namespace TabloidCLI
+namespace TabloidCLI
     {
         public class JournalRepository : DatabaseConnector, IRepository<Journal>
         {
@@ -27,121 +18,114 @@ namespace TabloidCLI.Repositories
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"SELECT id,
-                                               FirstName,
-                                               LastName,
-                                               Bio
-                                          FROM Author";
+                                               Title,
+                                               Content,
+                                               CreateDateTime
+                                          FROM Journal";
 
-                        List<Author> authors = new List<Author>();
+                        List<Journal> journals = new List<Journal>();
 
                         SqlDataReader reader = cmd.ExecuteReader();
                         while (reader.Read())
                         {
-                            Author author = new Author()
+                            Journal journal = new Journal()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                Bio = reader.GetString(reader.GetOrdinal("Bio")),
+                                Title = reader.GetString(reader.GetOrdinal("Title")),
+                                Content = reader.GetString(reader.GetOrdinal("Content")),
+                               CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                             };
-                            authors.Add(author);
+                            journals.Add(journal);
                         }
 
                         reader.Close();
 
-                        return authors;
+                        return journals;
                     }
                 }
             }
 
-            public Author Get(int id)
+            public Journal Get(int id)
             {
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"SELECT a.Id AS AuthorId,
-                                               a.FirstName,
-                                               a.LastName,
-                                               a.Bio,
+                        cmd.CommandText = @"SELECT a.Id AS JournalId,
+                                               a.Title,
+                                               a.Content,
+                                               a.CreateDateTime,
                                                t.Id AS TagId,
                                                t.Name
-                                          FROM Author a 
-                                               LEFT JOIN AuthorTag at on a.Id = at.AuthorId
+                                          FROM Journal a 
+                                               LEFT JOIN JournalTag at on a.Id = at.JournalId
                                                LEFT JOIN Tag t on t.Id = at.TagId
                                          WHERE a.id = @id";
 
                         cmd.Parameters.AddWithValue("@id", id);
 
-                        Author author = null;
+                        Journal journal = null;
 
                         SqlDataReader reader = cmd.ExecuteReader();
                         while (reader.Read())
                         {
-                            if (author == null)
+                            if (journal == null)
                             {
-                                author = new Author()
+                                journal = new Journal()
                                 {
-                                    Id = reader.GetInt32(reader.GetOrdinal("AuthorId")),
-                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                    Bio = reader.GetString(reader.GetOrdinal("Bio")),
+                                    Id = reader.GetInt32(reader.GetOrdinal("JournalId")),
+                                    Title = reader.GetString(reader.GetOrdinal("Title")),
+                                    Content = reader.GetString(reader.GetOrdinal("Content")),
+                                    CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                                 };
                             }
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("TagId")))
-                            {
-                                author.Tags.Add(new Tag()
-                                {
-                                    Id = reader.GetInt32(reader.GetOrdinal("TagId")),
-                                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                                });
-                            }
+                            
                         }
 
                         reader.Close();
 
-                        return author;
+                        return journal;
                     }
                 }
             }
 
-            public void Insert(Author author)
+            public void Insert(Journal journal)
             {
                 using (SqlConnection conn = Connection)
-                {
+                { 
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"INSERT INTO Author (FirstName, LastName, Bio )
-                                                     VALUES (@firstName, @lastName, @bio)";
-                        cmd.Parameters.AddWithValue("@firstName", author.FirstName);
-                        cmd.Parameters.AddWithValue("@lastName", author.LastName);
-                        cmd.Parameters.AddWithValue("@bio", author.Bio);
+                        cmd.CommandText = @"INSERT INTO Journal (Title, Content, CreateDateTime )
+                                                     VALUES (@Title, @Content, @CreateDateTime)";
+                        cmd.Parameters.AddWithValue("@Title", journal.Title);
+                        cmd.Parameters.AddWithValue("@Content", journal.Content);
+                        cmd.Parameters.AddWithValue("@CreateDateTime", journal.CreateDateTime);
 
                         cmd.ExecuteNonQuery();
                     }
                 }
             }
 
-            public void Update(Author author)
+            public void Update(Journal journal)
             {
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"UPDATE Author 
-                                           SET FirstName = @firstName,
-                                               LastName = @lastName,
-                                               bio = @bio
+                        cmd.CommandText = @"UPDATE Journal
+                                           SET Title = @Title,
+                                               Content = @Content,
+                                               CreateDateTime = @CreateDateTime
                                          WHERE id = @id";
 
-                        cmd.Parameters.AddWithValue("@firstName", author.FirstName);
-                        cmd.Parameters.AddWithValue("@lastName", author.LastName);
-                        cmd.Parameters.AddWithValue("@bio", author.Bio);
-                        cmd.Parameters.AddWithValue("@id", author.Id);
+                        cmd.Parameters.AddWithValue("@Title", journal.Title);
+                        cmd.Parameters.AddWithValue("@Content", journal.Content);
+                        cmd.Parameters.AddWithValue("@CreateDateTime", journal.CreateDateTime);
+                        cmd.Parameters.AddWithValue("@id", journal.Id);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -153,4 +137,4 @@ namespace TabloidCLI.Repositories
             
         }
     }
-}
+
