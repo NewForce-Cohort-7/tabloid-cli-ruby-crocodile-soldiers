@@ -32,11 +32,12 @@ namespace TabloidCLI.UserInterfaceManagers
                 case "1":
                     List();
                     return this;
+                
                 case "2":
                     Add();
                     return this;
                 case "3":
-                    Edit();
+                    Update();
                     return this;
                 case "4":
                     Remove();
@@ -71,7 +72,21 @@ namespace TabloidCLI.UserInterfaceManagers
 
         private void Edit()
         {
-            throw new NotImplementedException();
+            Tag tagToEdit = Choose("Which tag would you like to edit?");
+            if (tagToEdit == null)
+            {
+                return;
+            }
+
+            Console.WriteLine();
+            Console.Write("New tag name (blank to leave unchanged: ");
+            string name = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                tagToEdit.Name = name;
+            }
+
+            _tagRepository.Update(tagToEdit);
         }
 
         private void Remove()
