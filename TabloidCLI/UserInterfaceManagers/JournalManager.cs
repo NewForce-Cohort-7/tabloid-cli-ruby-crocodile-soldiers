@@ -22,8 +22,8 @@ namespace TabloidCLI.UserInterfaceManagers
         {
             Console.WriteLine("Journal Menu");
             Console.WriteLine(" 1) List Journal");
-            Console.WriteLine(" 2) Journal Details");
-            Console.WriteLine(" 3) Add Journal");
+          
+            Console.WriteLine(" 2) Add Journal");
 
             Console.WriteLine(" 0) Go Back");
 
@@ -44,7 +44,7 @@ namespace TabloidCLI.UserInterfaceManagers
                     //{
                     //    return new JournalDetailManager(this, _connectionString, journal.Id);
                     //}
-                case "3":
+                case "2":
                     Add();
                     return this;
 
