@@ -129,7 +129,27 @@ namespace TabloidCLI.Repositories
 
         public void Insert(Post post)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+            INSERT INTO Post (Title, Url, PublishDateTime, AuthorId, BlogId)
+            OUTPUT INSERTED.ID
+            VALUES (@title, @url, @publishDateTime, @authorId, @blogId)";
+
+                    cmd.Parameters.AddWithValue("@title", post.Title);
+                    cmd.Parameters.AddWithValue("@url", post.Url);
+                    cmd.Parameters.AddWithValue("@publishDateTime", post.PublishDateTime);
+                    cmd.Parameters.AddWithValue("@authorId", post.Author.Id); // assuming Author object is not null
+                    cmd.Parameters.AddWithValue("@blogId", post.Blog.Id); // assuming Blog object is not null
+
+                    int id = (int)cmd.ExecuteScalar();
+
+                    post.Id = id;
+                }
+            }
         }
 
         public void Update(Post post)
@@ -139,7 +159,25 @@ namespace TabloidCLI.Repositories
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM PostTag WHERE PostId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Then, delete the Post
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM Post WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
