@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using TabloidCLI.Models;
 
 namespace TabloidCLI.UserInterfaceManagers
@@ -21,7 +22,8 @@ namespace TabloidCLI.UserInterfaceManagers
         {
             Console.WriteLine("Journal Menu");
             Console.WriteLine(" 1) List Journal");
-            Console.WriteLine(" 2) Add Journal");
+            Console.WriteLine(" 2) Journal Details");
+            Console.WriteLine(" 3) Add Journal");
 
             Console.WriteLine(" 0) Go Back");
 
@@ -33,15 +35,15 @@ namespace TabloidCLI.UserInterfaceManagers
                     List();
                     return this;
                 //case "2":
-                //    Journal journal = Choose();
-                //    if (journal == null)
-                //    {
-                //        return this;
-                //    }
-                //    else
-                //    {
-                //        return new JournalDetailManager(this, _connectionString, journal.Id);
-                //    }
+                    //Journal journal = Choose();
+                    //if (journal == null)
+                    //{
+                    //    return this;
+                    //}
+                    //else
+                    //{
+                    //    return new JournalDetailManager(this, _connectionString, journal.Id);
+                    //}
                 case "3":
                     Add();
                     return this;
@@ -60,7 +62,7 @@ namespace TabloidCLI.UserInterfaceManagers
             List<Journal> journals = _journalRepository.GetAll();
             foreach (Journal journal in journals)
             {
-                Console.WriteLine(journal);
+                Console.WriteLine($"{journal.Title}");
             }
         }
 
@@ -106,9 +108,13 @@ namespace TabloidCLI.UserInterfaceManagers
             Console.Write("Content: ");
             journal.Content = Console.ReadLine();
 
-            Console.Write("Date and Time:  ");
-           journal.CreateDateTime = Console.ReadLine();
-       
+    
+          
+           journal.CreateDateTime = DateTime.Now;
+
+
+
+
 
             _journalRepository.Insert(journal);
         }
