@@ -32,7 +32,7 @@ namespace TabloidCLI.UserInterfaceManagers
                 case "1":
                     List();
                     return this;
-
+       
                 case "2":
                     Add();
                     return this;
