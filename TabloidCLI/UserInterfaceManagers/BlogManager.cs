@@ -24,6 +24,7 @@ namespace TabloidCLI.UserInterfaceManagers
             Console.WriteLine(" 2) See All Blogs");
             Console.WriteLine(" 3) Remove a Blog");
             Console.WriteLine(" 4) Edit a Blog");
+            Console.WriteLine(" 5) Blog Details");
             Console.WriteLine(" 0) Go Back");
 
             Console.Write("> ");
@@ -42,6 +43,16 @@ namespace TabloidCLI.UserInterfaceManagers
                 case "4":
                     EditBlog();
                     return this;
+                case "5":
+                    Blog blog = ChooseBlog();
+                    if (blog == null)
+                    {
+                        return this;
+                    }
+                    else
+                    {
+                        return new BlogDetailManager(this, _connectionString, blog.Id);
+                    }
                 case "0":
                     return _parentUI;
                 default:

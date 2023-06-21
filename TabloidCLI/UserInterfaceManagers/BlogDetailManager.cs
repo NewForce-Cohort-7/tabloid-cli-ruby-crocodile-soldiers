@@ -1,35 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TabloidCLI.Models;
 using TabloidCLI.Repositories;
 
 namespace TabloidCLI.UserInterfaceManagers
 {
-    internal class AuthorDetailManager : IUserInterfaceManager
+    internal class BlogDetailManager : IUserInterfaceManager
     {
         private IUserInterfaceManager _parentUI;
-        private AuthorRepository _authorRepository;
-        private PostRepository _postRepository;
+        private BlogRepository _blogRepository;
         private TagRepository _tagRepository;
-        private int _authorId;
+        private PostRepository _postRepository;
+        private string _connectionString;
+        private int _blogId;
 
-        public AuthorDetailManager(IUserInterfaceManager parentUI, string connectionString, int authorId)
+        public BlogDetailManager(IUserInterfaceManager parentUI, string connectionString, int blogId)
         {
             _parentUI = parentUI;
-            _authorRepository = new AuthorRepository(connectionString);
-            _postRepository = new PostRepository(connectionString);
+            _blogRepository = new BlogRepository(connectionString);
             _tagRepository = new TagRepository(connectionString);
-            _authorId = authorId;
+            _postRepository = new PostRepository(connectionString);
+            _connectionString = connectionString;
+            _blogId = blogId;
         }
 
         public IUserInterfaceManager Execute()
         {
-            Author author = _authorRepository.Get(_authorId);
-            Console.WriteLine($"{author.FullName} Details");
+            Blog blog = _blogRepository.Get(_blogId);
+            Console.WriteLine($"{blog.Title} Details");
             Console.WriteLine(" 1) View");
-            Console.WriteLine(" 2) View Blog Posts");
-            Console.WriteLine(" 3) Add Tag");
-            Console.WriteLine(" 4) Remove Tag");
+            Console.WriteLine(" 2) Add Tag");
+            Console.WriteLine(" 3) Remove Tag");
+            Console.WriteLine(" 4) View Posts");
             Console.WriteLine(" 0) Go Back");
 
             Console.Write("> ");
@@ -40,13 +45,13 @@ namespace TabloidCLI.UserInterfaceManagers
                     View();
                     return this;
                 case "2":
-                    ViewBlogPosts();
-                    return this;
-                case "3":
                     AddTag();
                     return this;
-                case "4":
+                case "3":
                     RemoveTag();
+                    return this;
+                case "4":
+                    ViewPostsofBlog();
                     return this;
                 case "0":
                     return _parentUI;
@@ -58,82 +63,73 @@ namespace TabloidCLI.UserInterfaceManagers
 
         private void View()
         {
-            Author author = _authorRepository.Get(_authorId);
-            Console.WriteLine($"Name: {author.FullName}");
-            Console.WriteLine($"Bio: {author.Bio}");
+            Blog blog = _blogRepository.Get(_blogId);
+            Console.WriteLine($"Title: {blog.Title}");
+            Console.WriteLine($"URL: {blog.Url}");
             Console.WriteLine("Tags:");
-            foreach (Tag tag in author.Tags)
+            foreach (Tag tag in blog.Tags)
             {
                 Console.WriteLine(" " + tag);
             }
             Console.WriteLine();
         }
 
-        private void ViewBlogPosts()
-        {
-            List<Post> posts = _postRepository.GetByAuthor(_authorId);
-            foreach (Post post in posts)
-            {
-                Console.WriteLine($" Title: {post.Title}" +
-                                  $" URL: {post.Url}" +
-                                  $" Date Published: {post.PublishDateTime}" + 
-                                  $" Posted on: {post.Blog}");
-            }
-            Console.WriteLine();
-        }
+    
 
         private void AddTag()
         {
-            Author author = _authorRepository.Get(_authorId);
-
-            Console.WriteLine($"Which tag would you like to add to {author.FullName}?");
+            Blog blog = _blogRepository.Get(_blogId);
+            Console.WriteLine($"Which tag would you like to add to {blog.Title}?");
             List<Tag> tags = _tagRepository.GetAll();
-
             for (int i = 0; i < tags.Count; i++)
             {
                 Tag tag = tags[i];
                 Console.WriteLine($" {i + 1}) {tag.Name}");
             }
             Console.Write("> ");
-
             string input = Console.ReadLine();
-            try
+            try 
             {
                 int choice = int.Parse(input);
                 Tag tag = tags[choice - 1];
-                _authorRepository.InsertTag(author, tag);
+                _blogRepository.InsertTag(blog, tag);
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 Console.WriteLine("Invalid Selection. Won't add any tags.");
             }
         }
-
         private void RemoveTag()
         {
-            Author author = _authorRepository.Get(_authorId);
-
-            Console.WriteLine($"Which tag would you like to remove from {author.FullName}?");
-            List<Tag> tags = author.Tags;
-
+            Blog blog = _blogRepository.Get(_blogId);
+            Console.WriteLine($"Which tag will you remove from {blog.Title}?");
+            List<Tag> tags = blog.Tags;
             for (int i = 0; i < tags.Count; i++)
             {
                 Tag tag = tags[i];
                 Console.WriteLine($" {i + 1}) {tag.Name}");
             }
             Console.Write("> ");
-
             string input = Console.ReadLine();
             try
             {
                 int choice = int.Parse(input);
                 Tag tag = tags[choice - 1];
-                _authorRepository.DeleteTag(author.Id, tag.Id);
+                _blogRepository.DeleteTag(blog.Id, tag.Id);
             }
-            catch (Exception ex)
+            catch (Exception ex )
             {
-                Console.WriteLine("Invalid Selection. Won't remove any tags.");
+                Console.WriteLine("Invalid Selection. Won't remove any tags");
             }
+        }
+        private void ViewPostsofBlog()
+        {
+            List<Post> posts = _postRepository.GetByBlog(_blogId);
+            foreach (Post post in posts)
+            {
+                Console.WriteLine($" Title: {post.Title} URL: {post.Url} Date Published: {post.PublishDateTime} Author: {post.Author}");
+            }
+            Console.WriteLine();
         }
     }
 }
