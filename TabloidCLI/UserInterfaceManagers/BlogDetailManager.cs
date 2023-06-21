@@ -51,7 +51,8 @@ namespace TabloidCLI.UserInterfaceManagers
                     RemoveTag();
                     return this;
                 case "4":
-                    throw new Exception();
+                    ViewPostsofBlog();
+                    return this;
                 case "0":
                     return _parentUI;
                 default:
@@ -66,8 +67,14 @@ namespace TabloidCLI.UserInterfaceManagers
             Console.WriteLine($"Title: {blog.Title}");
             Console.WriteLine($"URL: {blog.Url}");
             Console.WriteLine("Tags:");
-
+            foreach (Tag tag in blog.Tags)
+            {
+                Console.WriteLine(" " + tag);
+            }
+            Console.WriteLine();
         }
+
+    
 
         private void AddTag()
         {
@@ -120,18 +127,9 @@ namespace TabloidCLI.UserInterfaceManagers
             List<Post> posts = _postRepository.GetByBlog(_blogId);
             foreach (Post post in posts)
             {
-                Console.WriteLine(post);
+                Console.WriteLine($" Title: {post.Title} URL: {post.Url} Date Published: {post.PublishDateTime} Author: {post.Author}");
             }
             Console.WriteLine();
         }
     }
 }
-//View
-
-//Add Tag
-
-//Remove Tag
-
-//View Posts
-
-//Return

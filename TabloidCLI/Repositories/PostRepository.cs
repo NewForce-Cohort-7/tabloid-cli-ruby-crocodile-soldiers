@@ -186,6 +186,8 @@ namespace TabloidCLI.Repositories
         }
 
 
+
+
         public void Insert(Post post)
         {
             using (SqlConnection conn = Connection)
